@@ -23,6 +23,7 @@ stdin.on('data', data => {
     outfile.write(data);
       });
 
+ // без этого фрагмента при ctrl+с прогрмма выходит без сообщения прощального
  process.stdin.resume();  // не понимаю, но пишут что нужно
  process.on('SIGINT', function() {  // не понимаю. но этот сигнал генерируется пр нажатии ctrl c
         process.exit();
