@@ -46,24 +46,24 @@ emitter.on('project-dist_created', () => {   //  1 - подставляем те
     fs.readFile( path.join(__dirname, 'template.html'), 'utf-8', (err, data) => { // читаем файл темплейтов
     if (err) throw err;
     template=data.toString();  
+    
     fs.readdir(path.join(__dirname,'components'), (err, files) => { // читаем директорию компонентов
         if (err)  throw err;
-        files.forEach(file => {
-            fs.stat(path.join(__dirname,'components',file), (err, stats) => { // статистика нужна чтобы проверить "это файл?"
+          files.forEach(file => {
+          fs.stat(path.join(__dirname,'components',file), (err, stats) => { // статистика нужна чтобы проверить "это файл?"
                 if (err) throw err;
                  let info= path.parse(file);
                 if(stats.isFile() && info.ext=='.html') {  
                     fs.readFile( path.join(__dirname, 'components',file), 'utf-8', (err, component) => { // читаем файл темплейтов
                         if (err) throw err;
                         template=template.replace(`{{${info.name}}}`,component.toString());
-                        if(template.indexOf('{{') < 0)  {  // сохраняем файл с подставленными темплейтами
-                            const outfile= fs.createWriteStream(path.join(__dirname, 'project-dist', 'index.html'));
-                            outfile.write(template);
-                         }
+                        const outfile= fs.createWriteStream(path.join(__dirname, 'project-dist', 'index.html'));
+                        outfile.write(template);
                         }) // readFile component
                 } // это файл и компонент
             }) // stat взяли 
-        }) // foreach списка компонентов
+        }
+        ) // foreach списка компонентов
     }) // readdir
 }) // readfile template
 }); // emitter.on
@@ -88,4 +88,3 @@ emitter.on('project-dist_created', () => {   // 3 - слияие стилей
        }) //foreach
    }) // readdir
 }); // emitter
-    

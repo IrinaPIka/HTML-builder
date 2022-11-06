@@ -10,12 +10,10 @@
 */
 const fs = require('fs');
 const path = require('path');
-
 const outfile = fs.createWriteStream(path.join(__dirname, 'result.txt'));
 const { stdin, stdout } = process;
 
 stdout.write('Путник, приветствую!\n Готов принять твое послание. \n Введи exit в конце текста.\n');
-
 stdin.on('data', data => {
     if(data.toString().indexOf('exit')>=0)  {
        process.exit();
@@ -24,9 +22,8 @@ stdin.on('data', data => {
       });
 
  // без этого фрагмента при ctrl+с прогрмма выходит без сообщения прощального
- process.stdin.resume();  // не понимаю, но пишут что нужно
- process.on('SIGINT', function() {  // не понимаю. но этот сигнал генерируется пр нажатии ctrl c
+ process.stdin.resume();  
+ process.on('SIGINT', function() {  
         process.exit();
       });
-
 process.on('exit', () => stdout.write('Сеанс завершен.'));

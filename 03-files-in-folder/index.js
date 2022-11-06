@@ -1,7 +1,7 @@
 /*
 выводим информацию о файлах из 03-files-in-folder/secret-folder. 
 формате <имя файла>-<расширение файла>-<вес файла>. Пример: example - txt - 128.369kb (округлять не нужно, конвертация в кб по желанию!)
- 
+
 Порядок действий для выполнения задачи:
         Импорт всех требуемых модулей
         Чтение содержимого папки secret-folder
@@ -13,8 +13,7 @@ const fs = require('fs');
 const path = require('path');
 
 fs.readdir(path.join(__dirname,'secret-folder'), (err, files) => {
-    if (err)
-      console.log(err);
+    if (err)  console.log(err);
     else {
       console.log("\nFiles from secret-folder:");
       files.forEach(file => {
