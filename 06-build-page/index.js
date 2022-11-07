@@ -57,8 +57,10 @@ emitter.on('project-dist_created', () => {   //  1 - подставляем те
                     fs.readFile( path.join(__dirname, 'components',file), 'utf-8', (err, component) => { // читаем файл темплейтов
                         if (err) throw err;
                         template=template.replace(`{{${info.name}}}`,component.toString());
-                        const outfile= fs.createWriteStream(path.join(__dirname, 'project-dist', 'index.html'));
-                        outfile.write(template);
+                        if(template.indexOf('{{')<0) {
+                            const outfile= fs.createWriteStream(path.join(__dirname, 'project-dist', 'index.html'));
+                            outfile.write(template);
+                            }
                         }) // readFile component
                 } // это файл и компонент
             }) // stat взяли 
