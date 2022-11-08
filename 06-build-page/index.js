@@ -1,23 +1,9 @@
-/*
-После завершения работы скрипта должна быть создана папка project-dist
-В папке project-dist должны находиться файлы index.html и style.css
-В папке project-dist должна находиться папка assets являющаяся точной копией папки assets находящейся в 06-build-page
- Файл index.html должен содержать разметку являющуюся результатом замены шаблонных тегов в файле template.html
-Файл style.css должен содержать стили собранные из файлов папки styles
-
- Импорт всех требуемых модулей
-Прочтение и сохранение в переменной файла-шаблона
-Нахождение всех имён тегов в файле шаблона
-Замена шаблонных тегов содержимым файлов-компонентов
-Запись изменённого шаблона в файл index.html в папке project-dist
-Использовать скрипт написанный в задании 05-merge-styles для создания файла style.css
-Использовать скрипт из задания 04-copy-directory для переноса папки assets в папку project-dist
-*/
 const fs = require('fs');
 const path = require('path');
 const EventEmitter = require('events');
 const emitter = new EventEmitter();
 var template;
+
 
 function copyfiles(prefix, curdir, pathfrom) {
     fs.mkdir(path.join(prefix, curdir), { recursive: true },  (err) => { 
@@ -34,7 +20,15 @@ function copyfiles(prefix, curdir, pathfrom) {
             }) // foreach
         }) // read dir
     }) // mk dir
-} // function
+} 
+
+async function writetempl (outfile) {
+    try {    
+        outfile.write(template);    
+        outfile.end();
+    } 
+    catch(err) {      console.error(err);   }
+  }
 
 
 fs.mkdir(path.join(__dirname,'project-dist'), { recursive: true },  (err) => { 
@@ -43,29 +37,26 @@ fs.mkdir(path.join(__dirname,'project-dist'), { recursive: true },  (err) => {
 });
 
 emitter.on('project-dist_created', () => {   //  1 - подставляем темплейты в шаблон  
-    fs.readFile( path.join(__dirname, 'template.html'), 'utf-8', (err, data) => { // читаем файл темплейтов
+    fs.readFile( path.join(__dirname, 'template.html'), 'utf-8', (err, data) => { 
     if (err) throw err;
     template=data.toString();  
     
-    fs.readdir(path.join(__dirname,'components'), (err, files) => { // читаем директорию компонентов
+    fs.readdir(path.join(__dirname,'components'), (err, files) => { 
         if (err)  throw err;
           files.forEach(file => {
-          fs.stat(path.join(__dirname,'components',file), (err, stats) => { // статистика нужна чтобы проверить "это файл?"
+          fs.stat(path.join(__dirname,'components',file), (err, stats) => { 
                 if (err) throw err;
                  let info= path.parse(file);
-                if(stats.isFile() && info.ext=='.html') {  
-                    fs.readFile( path.join(__dirname, 'components',file), 'utf-8', (err, component) => { // читаем файл темплейтов
+                if(stats.isFile() && info.ext==='.html') {  
+                    fs.readFile( path.join(__dirname, 'components',file), 'utf-8', (err, component) => { 
                         if (err) throw err;
-                        template=template.replace(`{{${info.name}}}`,component.toString());
-                        if(template.indexOf('{{')<0) {
-                            const outfile= fs.createWriteStream(path.join(__dirname, 'project-dist', 'index.html'));
-                            outfile.write(template);
-                            }
-                        }) // readFile component
+                         template=template.replace(`{{${info.name}}}`,component.toString());
+                         const outfile= fs.createWriteStream(path.join(__dirname, 'project-dist', 'index.html'));
+                         writetempl (outfile);
+                           }) // readFile
                 } // это файл и компонент
-            }) // stat взяли 
-        }
-        ) // foreach списка компонентов
+            }) // stat 
+        }) // foreach 
     }) // readdir
 }) // readfile template
 }); // emitter.on
