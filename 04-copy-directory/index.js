@@ -10,12 +10,11 @@
 const fs = require('fs');
 const path = require('path');
 
-        fs.mkdir(path.join(__dirname,'files-copy'), // создает путь "с умом" используя слэши 
-          { recursive: true },   // не генерирует ошибку если директория уже есть
-          (err) => { 
+    fs.rm(path.join(__dirname,'files-copy'), { recursive: true, force: true },  (err) => { 
+        if (err) throw err;
+        fs.mkdir(path.join(__dirname,'files-copy'), { recursive: true }, (err) => { 
             if (err) throw err; 
-            
-            fs.readdir(path.join(__dirname,'files'), (err, files) => {  // в массиве files - названия файлов директории
+            fs.readdir(path.join(__dirname,'files'), (err, files) => {  
                 if (err) throw err; 
                 files.forEach(file => {    
                     fs.stat(path.join(__dirname,'files',file), (err, stats) => {
@@ -29,4 +28,5 @@ const path = require('path');
                   }); // callback stat
                 }); // foreach
             }); // readdir
-        }); // mkdir
+        }) //mkdir
+    });  //rm
